@@ -1,0 +1,33 @@
+﻿@import 'reset';
+
+$screen-colour: black;
+$text-colour: green;
+$text-fade-colour: white;
+
+#matrix {
+    width: 100%;
+    height: 100%;
+    background-color: $screen-colour;
+    color: $text-colour;
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-family:'Courier New';
+    font-size: 50px;
+    text-align: center;
+    white-space: pre;
+    overflow: hidden;
+}
+
+#matrix .matrix-row {
+    position:absolute;
+    top:0;
+    left:0;
+}
+
+#matrix .matrix-column {
+    background-image: linear-gradient(to bottom, $text-colour, $text-colour, $text-colour, $text-fade-colour);
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+}
