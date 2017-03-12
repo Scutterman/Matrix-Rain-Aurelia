@@ -1,6 +1,6 @@
 import {computedFrom} from "aurelia-framework";
 
-export class App2 {
+export class App {
     private matrix: HTMLElement;
     private rows: MatrixRow[] = new Array<MatrixRow>();
 
@@ -14,6 +14,9 @@ export class App2 {
 
     protected minCharacterFactor: number = 0.5;
     protected minCharacters: number;
+    
+    protected minColumnDelay: number = 0;
+    protected maxColumnDelay: number = 5;
 
     protected characters: string[] = 'abcdefghijklmnopqrstuvwxyz0123456789'.split('');
     
@@ -30,15 +33,13 @@ export class App2 {
     }
     
     private tick() {
-        this.rows.forEach((value: MatrixRow, index: number) => {
+        this.rows.filter(value => value.doTick === true).forEach((value: MatrixRow) => {
             value.topPositioning += value.pixelsPerTick;
 
             if (value.topPositioning > this.screenHeight) {
                 this.resetRow(value);
             }
         });
-        
-        
     }
 
     private addRow() {
@@ -50,9 +51,11 @@ export class App2 {
     }
 
     private resetRow(row: MatrixRow) {
+        row.doTick = false;
         row.setRowText(this.rowsOnScreen, this.minCharacters, this.characters);
-        row.pixelsPerTick = ((Math.ceil(Math.random() * (this.maxSpeed - this.minSpeed)) + this.minSpeed) / 10);
+        row.pixelsPerTick = (App.getRandomNumberBetween(this.maxSpeed, this.minSpeed) / 10);
         row.topPositioning = this.characterHeight * row.charactersInRow * -1;
+        setTimeout(() => {row.doTick = true}, App.getRandomNumberBetween(this.minColumnDelay, this.maxColumnDelay) * 1000)
     }
 
     private getTopRow(): MatrixRow {
@@ -61,6 +64,10 @@ export class App2 {
 
     private getBottomRow(): MatrixRow {
         return this.rows[0];
+    }
+
+    public static getRandomNumberBetween(min: number, max: number) : number {
+        return (Math.ceil(Math.random() * (max - min)) + min);
     }
     
     private setWidthsAndHeights(container: HTMLElement) {
@@ -92,6 +99,8 @@ export class MatrixRow {
     public rowText: string;
     public charactersInRow: number;
 
+    public doTick: boolean = false;
+
     @computedFrom("topPositioning")
     get cssText() {
         return `top: ${this.topPositioning}px; left: ${this.leftPosition}px; width: ${this.rowWidth}px;`;
@@ -99,7 +108,7 @@ export class MatrixRow {
     
     public setRowText(rowsOnScreen: number, minCharacters: number, characters: string[]) {
         let theString: string = '';
-        this.charactersInRow = Math.ceil(Math.random() * (rowsOnScreen - minCharacters)) + minCharacters;
+        this.charactersInRow = App.getRandomNumberBetween(rowsOnScreen, minCharacters);
         
         for (let i: number = 0; i < this.charactersInRow; i++) {
             if (i > 0) {

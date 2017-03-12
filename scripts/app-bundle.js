@@ -750,15 +750,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 define('app-v4',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var App2 = (function () {
-        function App2() {
+    var App = (function () {
+        function App() {
             this.rows = new Array();
             this.minSpeed = 30;
             this.maxSpeed = 70;
             this.minCharacterFactor = 0.5;
+            this.minColumnDelay = 0;
+            this.maxColumnDelay = 5;
             this.characters = 'abcdefghijklmnopqrstuvwxyz0123456789'.split('');
         }
-        App2.prototype.attached = function () {
+        App.prototype.attached = function () {
             var _this = this;
             this.setWidthsAndHeights(this.matrix);
             for (var i = 0; i < this.charactersInRow; i++) {
@@ -766,34 +768,39 @@ define('app-v4',["require", "exports", "aurelia-framework"], function (require, 
             }
             setInterval(function () { return _this.tick(); }, 25);
         };
-        App2.prototype.tick = function () {
+        App.prototype.tick = function () {
             var _this = this;
-            this.rows.forEach(function (value, index) {
+            this.rows.filter(function (value) { return value.doTick === true; }).forEach(function (value) {
                 value.topPositioning += value.pixelsPerTick;
                 if (value.topPositioning > _this.screenHeight) {
                     _this.resetRow(value);
                 }
             });
         };
-        App2.prototype.addRow = function () {
+        App.prototype.addRow = function () {
             var row = new MatrixRow();
             row.leftPosition = this.rows.length * this.characterWidth;
             row.rowWidth = this.characterWidth;
             this.resetRow(row);
             this.rows.push(row);
         };
-        App2.prototype.resetRow = function (row) {
+        App.prototype.resetRow = function (row) {
+            row.doTick = false;
             row.setRowText(this.rowsOnScreen, this.minCharacters, this.characters);
-            row.pixelsPerTick = ((Math.ceil(Math.random() * (this.maxSpeed - this.minSpeed)) + this.minSpeed) / 10);
+            row.pixelsPerTick = (App.getRandomNumberBetween(this.maxSpeed, this.minSpeed) / 10);
             row.topPositioning = this.characterHeight * row.charactersInRow * -1;
+            setTimeout(function () { row.doTick = true; }, App.getRandomNumberBetween(this.minColumnDelay, this.maxColumnDelay) * 1000);
         };
-        App2.prototype.getTopRow = function () {
+        App.prototype.getTopRow = function () {
             return this.rows[this.rows.length - 1];
         };
-        App2.prototype.getBottomRow = function () {
+        App.prototype.getBottomRow = function () {
             return this.rows[0];
         };
-        App2.prototype.setWidthsAndHeights = function (container) {
+        App.getRandomNumberBetween = function (min, max) {
+            return (Math.ceil(Math.random() * (max - min)) + min);
+        };
+        App.prototype.setWidthsAndHeights = function (container) {
             this.screenHeight = container.clientHeight;
             var oneCharacterContainer = document.createElement('span');
             oneCharacterContainer.innerText = 'A';
@@ -806,11 +813,12 @@ define('app-v4',["require", "exports", "aurelia-framework"], function (require, 
             this.minCharacters = Math.ceil(this.rowsOnScreen * this.minCharacterFactor);
             container.removeChild(addedNode);
         };
-        return App2;
+        return App;
     }());
-    exports.App2 = App2;
+    exports.App = App;
     var MatrixRow = (function () {
         function MatrixRow() {
+            this.doTick = false;
         }
         Object.defineProperty(MatrixRow.prototype, "cssText", {
             get: function () {
@@ -821,7 +829,7 @@ define('app-v4',["require", "exports", "aurelia-framework"], function (require, 
         });
         MatrixRow.prototype.setRowText = function (rowsOnScreen, minCharacters, characters) {
             var theString = '';
-            this.charactersInRow = Math.ceil(Math.random() * (rowsOnScreen - minCharacters)) + minCharacters;
+            this.charactersInRow = App.getRandomNumberBetween(rowsOnScreen, minCharacters);
             for (var i = 0; i < this.charactersInRow; i++) {
                 if (i > 0) {
                     theString += '<br />';
