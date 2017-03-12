@@ -54,7 +54,7 @@ export class App {
         row.doTick = false;
         row.setRowText(this.rowsOnScreen, this.minCharacters, this.characters);
         row.pixelsPerTick = (App.getRandomNumberBetween(this.maxSpeed, this.minSpeed) / 10);
-        row.topPositioning = this.characterHeight * row.charactersInRow * -1;
+        row.topPositioning = ((this.characterHeight) * (row.rowCharacters.length) * -1);
         setTimeout(() => {row.doTick = true}, App.getRandomNumberBetween(this.minColumnDelay, this.maxColumnDelay) * 1000)
     }
 
@@ -96,28 +96,25 @@ export class MatrixRow {
     
     public pixelsPerTick: number;
     
-    public rowText: string;
-    public charactersInRow: number;
-
+    public rowCharacters: string[] = new Array<string>();
+    
     public doTick: boolean = false;
 
     @computedFrom("topPositioning")
-    get cssText() {
+    get cssText(): string {
         return `top: ${this.topPositioning}px; left: ${this.leftPosition}px; width: ${this.rowWidth}px;`;
     }
     
-    public setRowText(rowsOnScreen: number, minCharacters: number, characters: string[]) {
-        let theString: string = '';
-        this.charactersInRow = App.getRandomNumberBetween(rowsOnScreen, minCharacters);
-        
-        for (let i: number = 0; i < this.charactersInRow; i++) {
-            if (i > 0) {
-                theString += '<br />';
-            }
-            theString += characters[Math.floor(Math.random() * (characters.length))];
-        }
+    @computedFrom("rowCharacters")
+    get rowText(): string {
+        return this.rowCharacters.join('<br />');
+    }
 
-        this.rowText = theString;
+    public setRowText(rowsOnScreen: number, minCharacters: number, characters: string[]) {
+        this.rowCharacters = new Array<string>();
+        for (let i: number = 0; i < App.getRandomNumberBetween(rowsOnScreen, minCharacters); i++) {
+            this.rowCharacters.push(characters[Math.floor(Math.random() * (characters.length))]);
+        }
     }
 
 }
