@@ -1,3 +1,10 @@
+/**
+ * TODO::
+ * The columns need to fade out, not just remove the characters.
+ * All columns should reach the bottom.
+ * The top fade-out should happen after a randomised delay - re-use the start delay?
+ * The column is reset when the bottom character has been faded out.
+ */ 
 import {computedFrom} from "aurelia-framework";
 
 export class App {
@@ -34,10 +41,25 @@ export class App {
     
     private tick() {
         this.rows.filter(value => value.doTick === true).forEach((value: MatrixRow) => {
-            value.topPositioning += value.pixelsPerTick;
+            if (value.addCharacters)
+            {
+                value.pseudoHeight += value.pixelsPerTick;
+                value.charactersToDisplay = Math.floor(value.pseudoHeight / this.characterHeight);
 
-            if (value.topPositioning > this.screenHeight) {
-                this.resetRow(value);
+                value.addCharacters = (value.charactersToDisplay < value.rowCharacters.length);
+            }
+            else
+            {
+                // This is essentially like having a box overlay the column, growing in height every tick and covering characters.
+                value.topPositioning += value.pixelsPerTick;
+
+                // The total number of characters that would at least partially covered by the pseudo overlay.
+                value.charactersToRemove = Math.ceil(value.topPositioning / this.characterHeight);
+                
+                if (value.charactersToRemove > value.charactersToDisplay)
+                {
+                    this.resetRow(value);
+                }
             }
         });
     }
@@ -45,16 +67,19 @@ export class App {
     private addRow() {
         let row: MatrixRow = new MatrixRow();
         row.leftPosition = this.rows.length * this.characterWidth;
-        row.rowWidth = this.characterWidth;
         this.resetRow(row);
         this.rows.push(row);
     }
 
     private resetRow(row: MatrixRow) {
         row.doTick = false;
+        row.addCharacters = true;
+        row.pseudoHeight = 0;
+        row.topPositioning = 0;
+        row.charactersToDisplay = 0;
+        row.charactersToRemove = 0;
         row.setRowText(this.rowsOnScreen, this.minCharacters, this.characters);
         row.pixelsPerTick = (App.getRandomNumberBetween(this.maxSpeed, this.minSpeed) / 10);
-        row.topPositioning = ((this.characterHeight) * (row.rowCharacters.length) * -1);
         setTimeout(() => {row.doTick = true}, App.getRandomNumberBetween(this.minColumnDelay, this.maxColumnDelay) * 1000)
     }
 
@@ -91,23 +116,28 @@ export class App {
 
 export class MatrixRow {
     public leftPosition: number;
-    public topPositioning: number;
-    public rowWidth: number;
+    public topPositioning: number = 0;
+
+    public pseudoHeight: number = 0;
     
+    public charactersToDisplay: number = 0;
+    public charactersToRemove: number = 0;
     public pixelsPerTick: number;
     
     public rowCharacters: string[] = new Array<string>();
+
+    public addCharacters = true;
     
     public doTick: boolean = false;
 
     @computedFrom("topPositioning")
     get cssText(): string {
-        return `top: ${this.topPositioning}px; left: ${this.leftPosition}px; width: ${this.rowWidth}px;`;
+        return `left: ${this.leftPosition}px; top: ${this.topPositioning}px`;
     }
     
-    @computedFrom("rowCharacters")
+    @computedFrom("charactersToDisplay", "charactersToRemove")
     get rowText(): string {
-        return this.rowCharacters.join('<br />');
+        return this.rowCharacters.filter((value, index) => (index >= this.charactersToRemove && index < this.charactersToDisplay)).join('<br />');
     }
 
     public setRowText(rowsOnScreen: number, minCharacters: number, characters: string[]) {

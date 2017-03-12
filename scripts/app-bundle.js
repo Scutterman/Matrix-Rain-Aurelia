@@ -771,24 +771,35 @@ define('app-v4',["require", "exports", "aurelia-framework"], function (require, 
         App.prototype.tick = function () {
             var _this = this;
             this.rows.filter(function (value) { return value.doTick === true; }).forEach(function (value) {
-                value.topPositioning += value.pixelsPerTick;
-                if (value.topPositioning > _this.screenHeight) {
-                    _this.resetRow(value);
+                if (value.addCharacters) {
+                    value.pseudoHeight += value.pixelsPerTick;
+                    value.charactersToDisplay = Math.floor(value.pseudoHeight / _this.characterHeight);
+                    value.addCharacters = (value.charactersToDisplay < value.rowCharacters.length);
+                }
+                else {
+                    value.topPositioning += value.pixelsPerTick;
+                    value.charactersToRemove = Math.ceil(value.topPositioning / _this.characterHeight);
+                    if (value.charactersToRemove > value.charactersToDisplay) {
+                        _this.resetRow(value);
+                    }
                 }
             });
         };
         App.prototype.addRow = function () {
             var row = new MatrixRow();
             row.leftPosition = this.rows.length * this.characterWidth;
-            row.rowWidth = this.characterWidth;
             this.resetRow(row);
             this.rows.push(row);
         };
         App.prototype.resetRow = function (row) {
             row.doTick = false;
+            row.addCharacters = true;
+            row.pseudoHeight = 0;
+            row.topPositioning = 0;
+            row.charactersToDisplay = 0;
+            row.charactersToRemove = 0;
             row.setRowText(this.rowsOnScreen, this.minCharacters, this.characters);
             row.pixelsPerTick = (App.getRandomNumberBetween(this.maxSpeed, this.minSpeed) / 10);
-            row.topPositioning = ((this.characterHeight) * (row.rowCharacters.length) * -1);
             setTimeout(function () { row.doTick = true; }, App.getRandomNumberBetween(this.minColumnDelay, this.maxColumnDelay) * 1000);
         };
         App.prototype.getTopRow = function () {
@@ -818,19 +829,25 @@ define('app-v4',["require", "exports", "aurelia-framework"], function (require, 
     exports.App = App;
     var MatrixRow = (function () {
         function MatrixRow() {
+            this.topPositioning = 0;
+            this.pseudoHeight = 0;
+            this.charactersToDisplay = 0;
+            this.charactersToRemove = 0;
             this.rowCharacters = new Array();
+            this.addCharacters = true;
             this.doTick = false;
         }
         Object.defineProperty(MatrixRow.prototype, "cssText", {
             get: function () {
-                return "top: " + this.topPositioning + "px; left: " + this.leftPosition + "px; width: " + this.rowWidth + "px;";
+                return "left: " + this.leftPosition + "px; top: " + this.topPositioning + "px";
             },
             enumerable: true,
             configurable: true
         });
         Object.defineProperty(MatrixRow.prototype, "rowText", {
             get: function () {
-                return this.rowCharacters.join('<br />');
+                var _this = this;
+                return this.rowCharacters.filter(function (value, index) { return (index >= _this.charactersToRemove && index < _this.charactersToDisplay); }).join('<br />');
             },
             enumerable: true,
             configurable: true
@@ -849,7 +866,7 @@ define('app-v4',["require", "exports", "aurelia-framework"], function (require, 
         __metadata("design:paramtypes", [])
     ], MatrixRow.prototype, "cssText", null);
     __decorate([
-        aurelia_framework_1.computedFrom("rowCharacters"),
+        aurelia_framework_1.computedFrom("charactersToDisplay", "charactersToRemove"),
         __metadata("design:type", String),
         __metadata("design:paramtypes", [])
     ], MatrixRow.prototype, "rowText", null);
