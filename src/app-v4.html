@@ -1,0 +1,6 @@
+<template>
+    <require from="assets/css/scss/matrix.css"></require>
+    <div ref="matrix" id="matrix">
+        <div class="matrix-row matrix-column" repeat.for="item of rows" css="${item.cssText}" innerhtml="${item.rowText}"></div>
+    </div>
+</template>

@@ -273,7 +273,7 @@ define('main',["require", "exports", "./environment"], function (require, export
         if (environment_1.default.testing) {
             aurelia.use.plugin('aurelia-testing');
         }
-        aurelia.start().then(function () { return aurelia.setRoot('app-v3', document.body); });
+        aurelia.start().then(function () { return aurelia.setRoot('app-v4', document.body); });
     }
     exports.configure = configure;
 });
@@ -534,6 +534,312 @@ define('app-v3',["require", "exports", "aurelia-framework"], function (require, 
     exports.MatrixRow = MatrixRow;
 });
 
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+define('app-v3 - Copy',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var App2 = (function () {
+        function App2() {
+            this.rows = new Array();
+            this.minSpeed = 30;
+            this.maxSpeed = 70;
+            this.minCharacterFactor = 0.5;
+            this.characters = 'abcdefghijklmnopqrstuvwxyz0123456789'.split('');
+        }
+        App2.prototype.attached = function () {
+            var _this = this;
+            this.setWidthsAndHeights(this.matrix);
+            for (var i = 0; i < this.charactersInRow; i++) {
+                this.addRow();
+            }
+            setInterval(function () { return _this.tick(); }, 25);
+        };
+        App2.prototype.tick = function () {
+            var _this = this;
+            this.rows.forEach(function (value, index) {
+                value.topPositioning += value.pixelsPerTick;
+                if (value.topPositioning > _this.screenHeight) {
+                    _this.resetRow(value);
+                }
+            });
+        };
+        App2.prototype.addRow = function () {
+            var row = new MatrixRow();
+            row.leftPosition = this.rows.length * this.characterWidth;
+            row.rowWidth = this.characterWidth;
+            this.resetRow(row);
+            this.rows.push(row);
+        };
+        App2.prototype.resetRow = function (row) {
+            row.setRowText(this.rowsOnScreen, this.minCharacters, this.characters);
+            row.pixelsPerTick = ((Math.ceil(Math.random() * (this.maxSpeed - this.minSpeed)) + this.minSpeed) / 10);
+            row.topPositioning = this.characterHeight * row.charactersInRow * -1;
+        };
+        App2.prototype.getTopRow = function () {
+            return this.rows[this.rows.length - 1];
+        };
+        App2.prototype.getBottomRow = function () {
+            return this.rows[0];
+        };
+        App2.prototype.setWidthsAndHeights = function (container) {
+            this.screenHeight = container.clientHeight;
+            var oneCharacterContainer = document.createElement('span');
+            oneCharacterContainer.innerText = 'A';
+            oneCharacterContainer.setAttribute('style', 'visibility:hidden; font-family: ' + window.getComputedStyle(container, null).getPropertyValue('font-family') + ';');
+            var addedNode = container.appendChild(oneCharacterContainer);
+            this.characterWidth = oneCharacterContainer.getBoundingClientRect().width;
+            this.characterHeight = oneCharacterContainer.getBoundingClientRect().height;
+            this.charactersInRow = Math.floor(container.clientWidth / this.characterWidth) - 1;
+            this.rowsOnScreen = Math.ceil(container.clientHeight / this.characterHeight) + 1;
+            this.minCharacters = Math.ceil(this.rowsOnScreen * this.minCharacterFactor);
+            container.removeChild(addedNode);
+        };
+        return App2;
+    }());
+    exports.App2 = App2;
+    var MatrixRow = (function () {
+        function MatrixRow() {
+        }
+        Object.defineProperty(MatrixRow.prototype, "cssText", {
+            get: function () {
+                return "top: " + this.topPositioning + "px; left: " + this.leftPosition + "px; width: " + this.rowWidth + "px;";
+            },
+            enumerable: true,
+            configurable: true
+        });
+        MatrixRow.prototype.setRowText = function (rowsOnScreen, minCharacters, characters) {
+            var theString = '';
+            this.charactersInRow = Math.ceil(Math.random() * (rowsOnScreen - minCharacters)) + minCharacters;
+            for (var i = 0; i < this.charactersInRow; i++) {
+                if (i > 0) {
+                    theString += '<br />';
+                }
+                theString += characters[Math.floor(Math.random() * (characters.length))];
+            }
+            this.rowText = theString;
+        };
+        return MatrixRow;
+    }());
+    __decorate([
+        aurelia_framework_1.computedFrom("topPositioning"),
+        __metadata("design:type", Object),
+        __metadata("design:paramtypes", [])
+    ], MatrixRow.prototype, "cssText", null);
+    exports.MatrixRow = MatrixRow;
+});
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+define('app-v',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var App2 = (function () {
+        function App2() {
+            this.rows = new Array();
+            this.minSpeed = 30;
+            this.maxSpeed = 70;
+            this.minCharacterFactor = 0.5;
+            this.characters = 'abcdefghijklmnopqrstuvwxyz0123456789'.split('');
+        }
+        App2.prototype.attached = function () {
+            var _this = this;
+            this.setWidthsAndHeights(this.matrix);
+            for (var i = 0; i < this.charactersInRow; i++) {
+                this.addRow();
+            }
+            setInterval(function () { return _this.tick(); }, 25);
+        };
+        App2.prototype.tick = function () {
+            var _this = this;
+            this.rows.forEach(function (value, index) {
+                value.topPositioning += value.pixelsPerTick;
+                if (value.topPositioning > _this.screenHeight) {
+                    _this.resetRow(value);
+                }
+            });
+        };
+        App2.prototype.addRow = function () {
+            var row = new MatrixRow();
+            row.leftPosition = this.rows.length * this.characterWidth;
+            row.rowWidth = this.characterWidth;
+            this.resetRow(row);
+            this.rows.push(row);
+        };
+        App2.prototype.resetRow = function (row) {
+            row.setRowText(this.rowsOnScreen, this.minCharacters, this.characters);
+            row.pixelsPerTick = ((Math.ceil(Math.random() * (this.maxSpeed - this.minSpeed)) + this.minSpeed) / 10);
+            row.topPositioning = this.characterHeight * row.charactersInRow * -1;
+        };
+        App2.prototype.getTopRow = function () {
+            return this.rows[this.rows.length - 1];
+        };
+        App2.prototype.getBottomRow = function () {
+            return this.rows[0];
+        };
+        App2.prototype.setWidthsAndHeights = function (container) {
+            this.screenHeight = container.clientHeight;
+            var oneCharacterContainer = document.createElement('span');
+            oneCharacterContainer.innerText = 'A';
+            oneCharacterContainer.setAttribute('style', 'visibility:hidden; font-family: ' + window.getComputedStyle(container, null).getPropertyValue('font-family') + ';');
+            var addedNode = container.appendChild(oneCharacterContainer);
+            this.characterWidth = oneCharacterContainer.getBoundingClientRect().width;
+            this.characterHeight = oneCharacterContainer.getBoundingClientRect().height;
+            this.charactersInRow = Math.floor(container.clientWidth / this.characterWidth) - 1;
+            this.rowsOnScreen = Math.ceil(container.clientHeight / this.characterHeight) + 1;
+            this.minCharacters = Math.ceil(this.rowsOnScreen * this.minCharacterFactor);
+            container.removeChild(addedNode);
+        };
+        return App2;
+    }());
+    exports.App2 = App2;
+    var MatrixRow = (function () {
+        function MatrixRow() {
+        }
+        Object.defineProperty(MatrixRow.prototype, "cssText", {
+            get: function () {
+                return "top: " + this.topPositioning + "px; left: " + this.leftPosition + "px; width: " + this.rowWidth + "px;";
+            },
+            enumerable: true,
+            configurable: true
+        });
+        MatrixRow.prototype.setRowText = function (rowsOnScreen, minCharacters, characters) {
+            var theString = '';
+            this.charactersInRow = Math.ceil(Math.random() * (rowsOnScreen - minCharacters)) + minCharacters;
+            for (var i = 0; i < this.charactersInRow; i++) {
+                if (i > 0) {
+                    theString += '<br />';
+                }
+                theString += characters[Math.floor(Math.random() * (characters.length))];
+            }
+            this.rowText = theString;
+        };
+        return MatrixRow;
+    }());
+    __decorate([
+        aurelia_framework_1.computedFrom("topPositioning"),
+        __metadata("design:type", Object),
+        __metadata("design:paramtypes", [])
+    ], MatrixRow.prototype, "cssText", null);
+    exports.MatrixRow = MatrixRow;
+});
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+define('app-v4',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var App2 = (function () {
+        function App2() {
+            this.rows = new Array();
+            this.minSpeed = 30;
+            this.maxSpeed = 70;
+            this.minCharacterFactor = 0.5;
+            this.characters = 'abcdefghijklmnopqrstuvwxyz0123456789'.split('');
+        }
+        App2.prototype.attached = function () {
+            var _this = this;
+            this.setWidthsAndHeights(this.matrix);
+            for (var i = 0; i < this.charactersInRow; i++) {
+                this.addRow();
+            }
+            setInterval(function () { return _this.tick(); }, 25);
+        };
+        App2.prototype.tick = function () {
+            var _this = this;
+            this.rows.forEach(function (value, index) {
+                value.topPositioning += value.pixelsPerTick;
+                if (value.topPositioning > _this.screenHeight) {
+                    _this.resetRow(value);
+                }
+            });
+        };
+        App2.prototype.addRow = function () {
+            var row = new MatrixRow();
+            row.leftPosition = this.rows.length * this.characterWidth;
+            row.rowWidth = this.characterWidth;
+            this.resetRow(row);
+            this.rows.push(row);
+        };
+        App2.prototype.resetRow = function (row) {
+            row.setRowText(this.rowsOnScreen, this.minCharacters, this.characters);
+            row.pixelsPerTick = ((Math.ceil(Math.random() * (this.maxSpeed - this.minSpeed)) + this.minSpeed) / 10);
+            row.topPositioning = this.characterHeight * row.charactersInRow * -1;
+        };
+        App2.prototype.getTopRow = function () {
+            return this.rows[this.rows.length - 1];
+        };
+        App2.prototype.getBottomRow = function () {
+            return this.rows[0];
+        };
+        App2.prototype.setWidthsAndHeights = function (container) {
+            this.screenHeight = container.clientHeight;
+            var oneCharacterContainer = document.createElement('span');
+            oneCharacterContainer.innerText = 'A';
+            oneCharacterContainer.setAttribute('style', 'visibility:hidden; font-family: ' + window.getComputedStyle(container, null).getPropertyValue('font-family') + ';');
+            var addedNode = container.appendChild(oneCharacterContainer);
+            this.characterWidth = oneCharacterContainer.getBoundingClientRect().width;
+            this.characterHeight = oneCharacterContainer.getBoundingClientRect().height;
+            this.charactersInRow = Math.floor(container.clientWidth / this.characterWidth) - 1;
+            this.rowsOnScreen = Math.ceil(container.clientHeight / this.characterHeight) + 1;
+            this.minCharacters = Math.ceil(this.rowsOnScreen * this.minCharacterFactor);
+            container.removeChild(addedNode);
+        };
+        return App2;
+    }());
+    exports.App2 = App2;
+    var MatrixRow = (function () {
+        function MatrixRow() {
+        }
+        Object.defineProperty(MatrixRow.prototype, "cssText", {
+            get: function () {
+                return "top: " + this.topPositioning + "px; left: " + this.leftPosition + "px; width: " + this.rowWidth + "px;";
+            },
+            enumerable: true,
+            configurable: true
+        });
+        MatrixRow.prototype.setRowText = function (rowsOnScreen, minCharacters, characters) {
+            var theString = '';
+            this.charactersInRow = Math.ceil(Math.random() * (rowsOnScreen - minCharacters)) + minCharacters;
+            for (var i = 0; i < this.charactersInRow; i++) {
+                if (i > 0) {
+                    theString += '<br />';
+                }
+                theString += characters[Math.floor(Math.random() * (characters.length))];
+            }
+            this.rowText = theString;
+        };
+        return MatrixRow;
+    }());
+    __decorate([
+        aurelia_framework_1.computedFrom("topPositioning"),
+        __metadata("design:type", Object),
+        __metadata("design:paramtypes", [])
+    ], MatrixRow.prototype, "cssText", null);
+    exports.MatrixRow = MatrixRow;
+});
+
 define('text!app.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"assets/css/scss/matrix.css\"></require>\n    <div ref=\"matrix\" id=\"matrix\"></div>\n</template>\n"; });
 define('text!app2.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"assets/css/scss/matrix.css\"></require>\n    <div ref=\"matrix\" id=\"matrix\">\n        <div class=\"matrix-row\" repeat.for=\"item of rows\" css=\"top: ${item.topPositioning}px\">${item.rowText}</div>\n    </div>\n</template>\n"; });
 define('text!app3.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"assets/css/scss/matrix.css\"></require>\n    <div ref=\"matrix\" id=\"matrix\">\n        <div class=\"matrix-row matrix-column\" repeat.for=\"item of rows\" css=\"${item.cssText}\" innerhtml=\"${item.rowText}\"></div>\n    </div>\n</template>\n"; });
@@ -542,4 +848,6 @@ define('text!assets/css/scss/reset.css', ['module'], function(module) { module.e
 define('text!app-v1.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"assets/css/scss/matrix.css\"></require>\n    <div ref=\"matrix\" id=\"matrix\"></div>\n</template>\n"; });
 define('text!app-v2.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"assets/css/scss/matrix.css\"></require>\n    <div ref=\"matrix\" id=\"matrix\">\n        <div class=\"matrix-row\" repeat.for=\"item of rows\" css=\"top: ${item.topPositioning}px\">${item.rowText}</div>\n    </div>\n</template>\n"; });
 define('text!app-v3.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"assets/css/scss/matrix.css\"></require>\n    <div ref=\"matrix\" id=\"matrix\">\n        <div class=\"matrix-row matrix-column\" repeat.for=\"item of rows\" css=\"${item.cssText}\" innerhtml=\"${item.rowText}\"></div>\n    </div>\n</template>\n"; });
+define('text!app-v3 - Copy.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"assets/css/scss/matrix.css\"></require>\n    <div ref=\"matrix\" id=\"matrix\">\n        <div class=\"matrix-row matrix-column\" repeat.for=\"item of rows\" css=\"${item.cssText}\" innerhtml=\"${item.rowText}\"></div>\n    </div>\n</template>\n"; });
+define('text!app-v4.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"assets/css/scss/matrix.css\"></require>\n    <div ref=\"matrix\" id=\"matrix\">\n        <div class=\"matrix-row matrix-column\" repeat.for=\"item of rows\" css=\"${item.cssText}\" innerhtml=\"${item.rowText}\"></div>\n    </div>\n</template>\n"; });
 //# sourceMappingURL=app-bundle.js.map
