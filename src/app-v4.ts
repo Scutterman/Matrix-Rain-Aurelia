@@ -27,32 +27,32 @@ export class App {
 
         this.setWidthsAndHeights(this.matrix);
         
-        for (let i: number = 0; i < this.columnsOnScreen; i++) { this.addRow(); }
+        for (let i: number = 0; i < this.columnsOnScreen; i++) { this.addColumn(); }
 
         setInterval(() => this.tick(), 25);
     }
     
     private tick() {
-        this.columns.filter(value => value.doTick === true).forEach((value: MatrixColumn) => {
-            value.tick();
+        this.columns.filter(column => column.doTick === true).forEach((column: MatrixColumn) => {
+            column.tick();
 
-            if (value.charactersToRemove > (value.charactersToDisplay + 10)) { this.resetRow(value); }
+            if (column.charactersToRemove > (column.charactersToDisplay + 10)) { this.resetColumn(column); }
         });
     }
 
-    private addRow() {
-        let row: MatrixColumn = new MatrixColumn();
-        row.leftPosition = this.columns.length * this.characterWidth;
-        row.characterHeight = this.characterHeight;
-        this.resetRow(row);
-        this.columns.push(row);
+    private addColumn() {
+        let column: MatrixColumn = new MatrixColumn();
+        column.leftPosition = this.columns.length * this.characterWidth;
+        column.characterHeight = this.characterHeight;
+        this.resetColumn(column);
+        this.columns.push(column);
     }
 
-    private resetRow(row: MatrixColumn) {
-        row.reset();
-        row.setRowText(this.rowsOnScreen, this.minCharacters, this.characters);
-        row.pixelsPerTick = (App.getRandomNumberBetween(this.maxSpeed, this.minSpeed) / 10);
-        setTimeout(() => {row.doTick = true}, App.getRandomNumberBetween(this.minColumnDelay, this.maxColumnDelay) * 1000)
+    private resetColumn(column: MatrixColumn) {
+        column.reset();
+        column.setRowText(this.rowsOnScreen, this.minCharacters, this.characters);
+        column.pixelsPerTick = (App.getRandomNumberBetween(this.maxSpeed, this.minSpeed) / 10);
+        setTimeout(() => {column.doTick = true}, App.getRandomNumberBetween(this.minColumnDelay, this.maxColumnDelay) * 1000)
     }
 
     public static getRandomNumberBetween(min: number, max: number) : number {
