@@ -101,7 +101,7 @@ export class App {
 
         let oneCharacterContainer: HTMLSpanElement = document.createElement('span');
         
-        oneCharacterContainer.innerText = 'A';
+        oneCharacterContainer.innerText = String.fromCharCode(12449);
         oneCharacterContainer.setAttribute('style', 'visibility:hidden; font-family: ' + window.getComputedStyle(container, null).getPropertyValue('font-family') + ';');
         let addedNode: Node = container.appendChild(oneCharacterContainer)
 
