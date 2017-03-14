@@ -17,7 +17,9 @@ export class App {
     protected maxSpeed: number = 70;
 
     protected minCharacterFactor: number = 0.1;
+    protected maxCharacterFactor: number = 0.5;
     protected minCharacters: number;
+    protected maxCharacters: number;
     
     protected minColumnDelay: number = 0;
     protected maxColumnDelay: number = 5;
@@ -107,6 +109,7 @@ export class App {
         this.charactersInRow = Math.floor(container.clientWidth / this.characterWidth) - 1;
         this.rowsOnScreen = Math.ceil(container.clientHeight / this.characterHeight) + 1;
         this.minCharacters = Math.ceil(this.rowsOnScreen * this.minCharacterFactor);
+        this.maxCharacters = Math.ceil(this.rowsOnScreen * this.maxCharacterFactor);
 
         container.removeChild(addedNode);
     }
