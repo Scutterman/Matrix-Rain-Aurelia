@@ -6,7 +6,7 @@ export class App {
 
     protected characterWidth: number;
     protected characterHeight: number;
-    protected charactersInRow: number;
+    protected columnsOnScreen: number;
     protected rowsOnScreen: number;
 
     protected minSpeed: number = 75;
@@ -27,7 +27,7 @@ export class App {
 
         this.setWidthsAndHeights(this.matrix);
         
-        for (let i: number = 0; i < this.charactersInRow; i++) { this.addRow(); }
+        for (let i: number = 0; i < this.columnsOnScreen; i++) { this.addRow(); }
 
         setInterval(() => this.tick(), 25);
     }
@@ -68,7 +68,7 @@ export class App {
 
         this.characterWidth = oneCharacterContainer.getBoundingClientRect().width;
         this.characterHeight = oneCharacterContainer.getBoundingClientRect().height;
-        this.charactersInRow = Math.floor(container.clientWidth / this.characterWidth) - 1;
+        this.columnsOnScreen = Math.floor(container.clientWidth / this.characterWidth) - 1;
         this.rowsOnScreen = Math.ceil(container.clientHeight / this.characterHeight) + 1;
         this.minCharacters = Math.ceil(this.rowsOnScreen * this.minCharacterFactor);
         this.maxCharacters = Math.ceil(this.rowsOnScreen * this.maxCharacterFactor);
