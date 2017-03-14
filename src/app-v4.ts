@@ -89,7 +89,7 @@ export class MatrixColumn {
     public charactersBeforeFadeStarts: number = 0;;
     public pixelsPerTick: number;
     
-    public rowCharacters: string[] = new Array<string>();
+    public columnCharacters: string[] = new Array<string>();
 
     public doTick: boolean = false;
 
@@ -104,8 +104,8 @@ export class MatrixColumn {
     }
     
     @computedFrom("charactersToDisplay")
-    get rowText(): string {
-        return this.rowCharacters.filter((value, index) => (index < this.charactersToDisplay)).join('<br />');
+    get columnText(): string {
+        return this.columnCharacters.filter((value, index) => (index < this.charactersToDisplay)).join('<br />');
     }
 
     public reset(){
@@ -119,14 +119,14 @@ export class MatrixColumn {
     public setRowText(rowsOnScreen: number, minCharacters: number, characters: string[]) {
         this.charactersBeforeFadeStarts = App.getRandomNumberBetween(rowsOnScreen, minCharacters);
 
-        this.rowCharacters = new Array<string>();
+        this.columnCharacters = new Array<string>();
         for (let i: number = 0; i < rowsOnScreen; i++) {
-            this.rowCharacters.push(characters[Math.floor(Math.random() * (characters.length))]);
+            this.columnCharacters.push(characters[Math.floor(Math.random() * (characters.length))]);
         }
     }
 
     public tick(){
-        if (this.charactersToDisplay < this.rowCharacters.length)
+        if (this.charactersToDisplay < this.columnCharacters.length)
         {
             this.pseudoHeight += this.pixelsPerTick;
             this.charactersToDisplay = Math.floor(this.pseudoHeight / this.characterHeight);
