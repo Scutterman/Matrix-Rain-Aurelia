@@ -73,12 +73,7 @@ export class App {
     }
 
     private resetRow(row: MatrixRow) {
-        row.doTick = false;
-        row.addCharacters = true;
-        row.pseudoHeight = 0;
-        row.topPositioning = 0;
-        row.charactersToDisplay = 0;
-        row.charactersToRemove = 0;
+        row.reset();
         row.setRowText(this.rowsOnScreen, this.minCharacters, this.characters);
         row.pixelsPerTick = (App.getRandomNumberBetween(this.maxSpeed, this.minSpeed) / 10);
         setTimeout(() => {row.doTick = true}, App.getRandomNumberBetween(this.minColumnDelay, this.maxColumnDelay) * 1000)
@@ -146,6 +141,15 @@ export class MatrixRow {
     @computedFrom("charactersToDisplay")
     get rowText(): string {
         return this.rowCharacters.filter((value, index) => (index < this.charactersToDisplay)).join('<br />');
+    }
+
+    public reset(){
+        this.doTick = false;
+        this.addCharacters = true;
+        this.pseudoHeight = 0;
+        this.topPositioning = 0;
+        this.charactersToDisplay = 0;
+        this.charactersToRemove = 0;
     }
 
     public setRowText(rowsOnScreen: number, minCharacters: number, characters: string[]) {
