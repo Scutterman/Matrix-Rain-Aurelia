@@ -22,19 +22,12 @@ export class App {
 
     protected characters: string[] = new Array<string>();
     
-    protected screenHeight: number;
-    
     attached() {
-        for (let i: number = 12449; i <= 12544; i++)
-        {
-            this.characters.push(String.fromCharCode(i));
-        }
+        for (let i: number = 12449; i <= 12544; i++) { this.characters.push(String.fromCharCode(i)); }
 
         this.setWidthsAndHeights(this.matrix);
         
-        for (let i: number = 0; i < this.charactersInRow; i++) {
-            this.addRow();
-        }
+        for (let i: number = 0; i < this.charactersInRow; i++) { this.addRow(); }
 
         setInterval(() => this.tick(), 25);
     }
@@ -42,10 +35,8 @@ export class App {
     private tick() {
         this.rows.filter(value => value.doTick === true).forEach((value: MatrixRow) => {
             value.tick();
-            if (value.charactersToRemove > (value.charactersToDisplay + 10))
-            {
-                this.resetRow(value);
-            }
+
+            if (value.charactersToRemove > (value.charactersToDisplay + 10)) { this.resetRow(value); }
         });
     }
 
@@ -64,21 +55,11 @@ export class App {
         setTimeout(() => {row.doTick = true}, App.getRandomNumberBetween(this.minColumnDelay, this.maxColumnDelay) * 1000)
     }
 
-    private getTopRow(): MatrixRow {
-        return this.rows[this.rows.length - 1];
-    }
-
-    private getBottomRow(): MatrixRow {
-        return this.rows[0];
-    }
-
     public static getRandomNumberBetween(min: number, max: number) : number {
         return (Math.ceil(Math.random() * (max - min)) + min);
     }
     
     private setWidthsAndHeights(container: HTMLElement) {
-        this.screenHeight = container.clientHeight;
-
         let oneCharacterContainer: HTMLSpanElement = document.createElement('span');
         
         oneCharacterContainer.innerText = String.fromCharCode(12449);
@@ -110,8 +91,6 @@ export class MatrixRow {
     
     public rowCharacters: string[] = new Array<string>();
 
-    public addCharacters = true;
-    
     public doTick: boolean = false;
 
     @computedFrom("leftPosition")
@@ -131,7 +110,6 @@ export class MatrixRow {
 
     public reset(){
         this.doTick = false;
-        this.addCharacters = true;
         this.pseudoHeight = 0;
         this.topPositioning = 0;
         this.charactersToDisplay = 0;
@@ -148,11 +126,10 @@ export class MatrixRow {
     }
 
     public tick(){
-        if (this.addCharacters)
+        if (this.charactersToDisplay < this.rowCharacters.length)
         {
             this.pseudoHeight += this.pixelsPerTick;
             this.charactersToDisplay = Math.floor(this.pseudoHeight / this.characterHeight);
-            this.addCharacters = (this.charactersToDisplay < this.rowCharacters.length);
         }
             
         if (this.charactersToDisplay >= this.charactersBeforeFadeStarts)
