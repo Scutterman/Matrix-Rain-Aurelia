@@ -41,26 +41,10 @@ export class App {
     
     private tick() {
         this.rows.filter(value => value.doTick === true).forEach((value: MatrixRow) => {
-            if (value.addCharacters)
+            value.tick();
+            if (value.charactersToRemove > (value.charactersToDisplay + 10))
             {
-                value.pseudoHeight += value.pixelsPerTick;
-                value.charactersToDisplay = Math.floor(value.pseudoHeight / this.characterHeight);
-
-                value.addCharacters = (value.charactersToDisplay < this.rowsOnScreen);
-            }
-            
-            if (value.charactersToDisplay >= value.charactersBeforeFadeStarts)
-            {
-                // This is essentially like having a box overlay the column, growing in height every tick and covering characters.
-                value.topPositioning += value.pixelsPerTick;
-
-                // The total number of characters that would at least partially covered by the pseudo overlay.
-                value.charactersToRemove = Math.ceil(value.topPositioning / this.characterHeight);
-                
-                if (value.charactersToRemove > (value.charactersToDisplay + 10))
-                {
-                    this.resetRow(value);
-                }
+                this.resetRow(value);
             }
         });
     }
@@ -68,6 +52,7 @@ export class App {
     private addRow() {
         let row: MatrixRow = new MatrixRow();
         row.leftPosition = this.rows.length * this.characterWidth;
+        row.characterHeight = this.characterHeight;
         this.resetRow(row);
         this.rows.push(row);
     }
@@ -112,6 +97,7 @@ export class App {
 }
 
 export class MatrixRow {
+    public characterHeight: number;
     public leftPosition: number;
     public topPositioning: number = 0;
 
@@ -158,6 +144,24 @@ export class MatrixRow {
         this.rowCharacters = new Array<string>();
         for (let i: number = 0; i < rowsOnScreen; i++) {
             this.rowCharacters.push(characters[Math.floor(Math.random() * (characters.length))]);
+        }
+    }
+
+    public tick(){
+        if (this.addCharacters)
+        {
+            this.pseudoHeight += this.pixelsPerTick;
+            this.charactersToDisplay = Math.floor(this.pseudoHeight / this.characterHeight);
+            this.addCharacters = (this.charactersToDisplay < this.rowCharacters.length);
+        }
+            
+        if (this.charactersToDisplay >= this.charactersBeforeFadeStarts)
+        {
+            // This is essentially like having a box overlay the column, growing in height every tick and covering characters.
+            this.topPositioning += this.pixelsPerTick;
+
+            // The total number of characters that would at least partially covered by the pseudo overlay.
+            this.charactersToRemove = Math.ceil(this.topPositioning / this.characterHeight);
         }
     }
 
