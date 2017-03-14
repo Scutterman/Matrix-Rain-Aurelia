@@ -1,9 +1,6 @@
 /**
  * TODO::
  * The columns need to fade out, not just remove the characters.
- * All columns should reach the bottom.
- * The top fade-out should happen after a randomised delay - re-use the start delay?
- * The column is reset when the bottom character has been faded out.
  */ 
 import {computedFrom} from "aurelia-framework";
 
@@ -19,7 +16,7 @@ export class App {
     protected minSpeed: number = 30;
     protected maxSpeed: number = 70;
 
-    protected minCharacterFactor: number = 0.5;
+    protected minCharacterFactor: number = 0.1;
     protected minCharacters: number;
     
     protected minColumnDelay: number = 0;
@@ -46,9 +43,10 @@ export class App {
                 value.pseudoHeight += value.pixelsPerTick;
                 value.charactersToDisplay = Math.floor(value.pseudoHeight / this.characterHeight);
 
-                value.addCharacters = (value.charactersToDisplay < value.rowCharacters.length);
+                value.addCharacters = (value.charactersToDisplay < this.rowsOnScreen);
             }
-            else
+            
+            if (value.charactersToDisplay >= value.charactersBeforeFadeStarts)
             {
                 // This is essentially like having a box overlay the column, growing in height every tick and covering characters.
                 value.topPositioning += value.pixelsPerTick;
@@ -122,6 +120,7 @@ export class MatrixRow {
     
     public charactersToDisplay: number = 0;
     public charactersToRemove: number = 0;
+    public charactersBeforeFadeStarts: number = 0;;
     public pixelsPerTick: number;
     
     public rowCharacters: string[] = new Array<string>();
@@ -141,8 +140,10 @@ export class MatrixRow {
     }
 
     public setRowText(rowsOnScreen: number, minCharacters: number, characters: string[]) {
+        this.charactersBeforeFadeStarts = App.getRandomNumberBetween(rowsOnScreen, minCharacters);
+
         this.rowCharacters = new Array<string>();
-        for (let i: number = 0; i < App.getRandomNumberBetween(rowsOnScreen, minCharacters); i++) {
+        for (let i: number = 0; i < rowsOnScreen; i++) {
             this.rowCharacters.push(characters[Math.floor(Math.random() * (characters.length))]);
         }
     }
