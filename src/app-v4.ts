@@ -56,7 +56,7 @@ export class App {
                 // The total number of characters that would at least partially covered by the pseudo overlay.
                 value.charactersToRemove = Math.ceil(value.topPositioning / this.characterHeight);
                 
-                if (value.charactersToRemove > value.charactersToDisplay)
+                if (value.charactersToRemove > (value.charactersToDisplay + 10))
                 {
                     this.resetRow(value);
                 }

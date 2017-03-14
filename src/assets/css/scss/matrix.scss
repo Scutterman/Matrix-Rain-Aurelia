@@ -34,7 +34,7 @@ $text-fade-colour: white;
 }
 
 #matrix .fade-column {
-    background-image: linear-gradient(to bottom, $screen-colour, transparent);
+    background-image: linear-gradient(to bottom, $screen-colour, $screen-colour, transparent);
     position: absolute;
     top: 0;
     width: 100%;
