@@ -1,6 +1,6 @@
 /**
  * TODO::
- * The columns need to fade out, not just remove the characters.
+ * Change text to be more like the traditional Matrix Rain font.
  */ 
 import {computedFrom} from "aurelia-framework";
 
@@ -13,8 +13,8 @@ export class App {
     protected charactersInRow: number;
     protected rowsOnScreen: number;
 
-    protected minSpeed: number = 30;
-    protected maxSpeed: number = 70;
+    protected minSpeed: number = 75;
+    protected maxSpeed: number = 150;
 
     protected minCharacterFactor: number = 0.1;
     protected maxCharacterFactor: number = 0.5;
@@ -22,7 +22,7 @@ export class App {
     protected maxCharacters: number;
     
     protected minColumnDelay: number = 0;
-    protected maxColumnDelay: number = 5;
+    protected maxColumnDelay: number = 10;
 
     protected characters: string[] = 'abcdefghijklmnopqrstuvwxyz0123456789'.split('');
     
