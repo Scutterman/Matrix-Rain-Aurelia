@@ -1,7 +1,3 @@
-/**
- * TODO::
- * Change text to be more like the traditional Matrix Rain font.
- */ 
 import {computedFrom} from "aurelia-framework";
 
 export class App {
@@ -24,11 +20,16 @@ export class App {
     protected minColumnDelay: number = 0;
     protected maxColumnDelay: number = 10;
 
-    protected characters: string[] = 'abcdefghijklmnopqrstuvwxyz0123456789'.split('');
+    protected characters: string[] = new Array<string>();
     
     protected screenHeight: number;
     
     attached() {
+        for (let i: number = 12449; i <= 12544; i++)
+        {
+            this.characters.push(String.fromCharCode(i));
+        }
+
         this.setWidthsAndHeights(this.matrix);
         
         for (let i: number = 0; i < this.charactersInRow; i++) {
