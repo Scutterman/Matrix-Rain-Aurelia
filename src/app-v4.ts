@@ -81,7 +81,7 @@ export class App {
         // Add a test span with one character in it to the container
         let oneCharacterContainer: HTMLSpanElement = document.createElement('span');
         oneCharacterContainer.innerText = String.fromCharCode(12449);
-        oneCharacterContainer.setAttribute('style', 'visibility:hidden; font-family: ' + window.getComputedStyle(container, null).getPropertyValue('font-family') + ';');
+        oneCharacterContainer.setAttribute('style', 'visibility:hidden; font-family: ' + window.getComputedStyle(container, null).getPropertyValue('font-family') + '; font-size: ' + window.getComputedStyle(container, null).getPropertyValue('font-size') + ';' );
         let addedNode: Node = container.appendChild(oneCharacterContainer)
 
         // The width and height of the span maps pretty reliably to the width and height of that one character. Monospaced font is essential here.
@@ -90,7 +90,7 @@ export class App {
 
         // Simple math to get the number of rows and columns on the screen. Container dimensions divided by character dimensions. 
         this.columnsOnScreen = Math.floor(container.clientWidth / this.characterWidth) - 1;
-        this.rowsOnScreen = Math.ceil(container.clientHeight / this.characterHeight) + 1;
+        this.rowsOnScreen = Math.floor(container.clientHeight / this.characterHeight);
 
         // Number of characters on the screen before the top ones start fading.
         this.minCharacters = Math.ceil(this.rowsOnScreen * this.minCharacterFactor);
@@ -153,7 +153,7 @@ export class MatrixColumn {
         if (this.charactersToDisplay < this.columnCharacters.length)
         {
             this.pseudoHeight += this.pixelsPerTick;
-            this.charactersToDisplay = Math.floor(this.pseudoHeight / this.characterHeight);
+            this.charactersToDisplay = Math.min(this.columnCharacters.length, Math.floor(this.pseudoHeight / this.characterHeight));
         }
             
         if (this.charactersToDisplay >= this.charactersBeforeFadeStarts)
