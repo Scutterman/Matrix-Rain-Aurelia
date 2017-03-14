@@ -2,7 +2,7 @@ import {computedFrom} from "aurelia-framework";
 
 export class App {
     private matrix: HTMLElement;
-    private rows: MatrixRow[] = new Array<MatrixRow>();
+    private columns: MatrixColumn[] = new Array<MatrixColumn>();
 
     protected characterWidth: number;
     protected characterHeight: number;
@@ -33,7 +33,7 @@ export class App {
     }
     
     private tick() {
-        this.rows.filter(value => value.doTick === true).forEach((value: MatrixRow) => {
+        this.columns.filter(value => value.doTick === true).forEach((value: MatrixColumn) => {
             value.tick();
 
             if (value.charactersToRemove > (value.charactersToDisplay + 10)) { this.resetRow(value); }
@@ -41,14 +41,14 @@ export class App {
     }
 
     private addRow() {
-        let row: MatrixRow = new MatrixRow();
-        row.leftPosition = this.rows.length * this.characterWidth;
+        let row: MatrixColumn = new MatrixColumn();
+        row.leftPosition = this.columns.length * this.characterWidth;
         row.characterHeight = this.characterHeight;
         this.resetRow(row);
-        this.rows.push(row);
+        this.columns.push(row);
     }
 
-    private resetRow(row: MatrixRow) {
+    private resetRow(row: MatrixColumn) {
         row.reset();
         row.setRowText(this.rowsOnScreen, this.minCharacters, this.characters);
         row.pixelsPerTick = (App.getRandomNumberBetween(this.maxSpeed, this.minSpeed) / 10);
@@ -77,7 +77,7 @@ export class App {
     }
 }
 
-export class MatrixRow {
+export class MatrixColumn {
     public characterHeight: number;
     public leftPosition: number;
     public topPositioning: number = 0;
