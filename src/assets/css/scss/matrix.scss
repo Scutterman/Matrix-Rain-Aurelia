@@ -32,3 +32,10 @@ $text-fade-colour: white;
     -webkit-background-clip: text;
     text-align: center;
 }
+
+#matrix .fade-column {
+    background-image: linear-gradient(to bottom, $screen-colour, transparent);
+    position: absolute;
+    top: 0;
+    width: 100%;
+}

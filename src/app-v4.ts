@@ -129,14 +129,19 @@ export class MatrixRow {
     
     public doTick: boolean = false;
 
-    @computedFrom("topPositioning")
+    @computedFrom("leftPosition")
     get cssText(): string {
-        return `left: ${this.leftPosition}px; top: ${this.topPositioning}px`;
+        return `left: ${this.leftPosition}px;`;
     }
     
-    @computedFrom("charactersToDisplay", "charactersToRemove")
+    @computedFrom("topPositioning")
+    get cssTextFadeColumn(): string {
+        return `left: ${this.leftPosition}px; height: ${this.topPositioning}px;`;
+    }
+    
+    @computedFrom("charactersToDisplay")
     get rowText(): string {
-        return this.rowCharacters.filter((value, index) => (index >= this.charactersToRemove && index < this.charactersToDisplay)).join('<br />');
+        return this.rowCharacters.filter((value, index) => (index < this.charactersToDisplay)).join('<br />');
     }
 
     public setRowText(rowsOnScreen: number, minCharacters: number, characters: string[]) {
