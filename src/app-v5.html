@@ -1,7 +1,7 @@
 <template>
     <require from="assets/css/scss/matrix.css"></require>
     <div ref="matrix" id="matrix">
-        <div repeat.for="item of columns" >
+        <div repeat.for="item of repeaterColumns" >
             <div class="matrix-column" css="${item.cssText}" innerhtml="${item.columnText}"></div>
             <div class="fade-column" css="${item.cssTextFadeColumn}"></div>
         </div>
