@@ -90,7 +90,7 @@ export class App {
 
         // Simple math to get the number of rows and columns on the screen. Container dimensions divided by character dimensions. 
         this.columnsOnScreen = Math.floor(container.clientWidth / this.characterWidth) - 1;
-        this.rowsOnScreen = Math.floor(container.clientHeight / this.characterHeight);
+        this.rowsOnScreen = Math.floor(container.clientHeight / this.characterHeight) + 10;
 
         // Number of characters on the screen before the top ones start fading.
         this.minCharacters = Math.ceil(this.rowsOnScreen * this.minCharacterFactor);
