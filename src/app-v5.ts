@@ -1,8 +1,8 @@
 import {computedFrom} from "aurelia-framework";
 
 export class App {
-    
-    private randomNumbers: number[] = new Array<number>();
+    private static randomNumbers: number[] = new Array<number>();
+    private static nextRandomNumberIndex: number = 0;
 
     // The container that will hold the rain effect.
     private matrix: HTMLElement;
@@ -40,6 +40,8 @@ export class App {
         // Calculate the character width and height of a monospaced character in the container. Also calculates the number of characters in a row and a column.
         this.setWidthsAndHeights(this.matrix);
         
+        App.PopulateRandomNumbers();
+
         // Fill the container with columns.
         for (let i: number = 0; i < this.columnsOnScreen; i++) { this.addColumn(); }
 
@@ -77,9 +79,28 @@ export class App {
 
     // Helper method to work around the limited nature of Javascript Math.random().
     public static getRandomNumberBetween(min: number, max: number) : number {
-        return (Math.ceil(Math.random() * (max - min)) + min);
+        return (Math.ceil(App.getNextRandomNumber() * (max - min)) + min);
     }
     
+    public static PopulateRandomNumbers(){
+        for (let i: number = 0; i < 5000000; i++)
+        {
+            this.randomNumbers.push(Math.random());
+        }
+    }
+
+    public static getNextRandomNumber() : number
+    {
+        if (App.nextRandomNumberIndex >= App.randomNumbers.length)
+        {
+            App.nextRandomNumberIndex++;
+        }
+
+        let nextNumber: number= App.randomNumbers[App.nextRandomNumberIndex];
+        App.nextRandomNumberIndex++;
+        return nextNumber;
+    }
+
     private setWidthsAndHeights(container: HTMLElement) {
         // Add a test span with one character in it to the container
         let oneCharacterContainer: HTMLSpanElement = document.createElement('span');
@@ -148,7 +169,7 @@ export class MatrixColumn {
 
         this.columnCharacters = new Array<string>();
         for (let i: number = 0; i < rowsOnScreen; i++) {
-            this.columnCharacters.push(characters[Math.floor(Math.random() * (characters.length))]);
+            this.columnCharacters.push(characters[Math.floor(App.getNextRandomNumber() * (characters.length))]);
         }
     }
 
