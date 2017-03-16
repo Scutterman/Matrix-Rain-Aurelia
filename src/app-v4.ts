@@ -32,7 +32,7 @@ export class App {
     
     attached() {
         // Push some characters into the available list.
-        for (let i: number = 12449; i <= 12544; i++) { this.characters.push(String.fromCharCode(i)); }
+        for (let i: number = 12449; i < 12544; i++) { this.characters.push(String.fromCharCode(i)); }
 
         // Calculate the character width and height of a monospaced character in the container. Also calculates the number of characters in a row and a column.
         this.setWidthsAndHeights(this.matrix);

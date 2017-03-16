@@ -28,6 +28,7 @@ $text-fade-colour: white;
     background-clip: text;
     -webkit-background-clip: text;
     text-align: center;
+    transform: scale(-1, 1);
 }
 
 #matrix .fade-column {
