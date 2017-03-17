@@ -57,39 +57,40 @@ export class App {
         App.PopulateRandomNumbers();
 
         // Fill the container with columns.
-        for (let i: number = 0; i < this.columnsOnScreen; i++) { this.addColumn(); }
+        this.tasks.queueMicroTask(() => {
+            for (let i: number = 0; i < this.columnsOnScreen; i++) { this.addColumn(); }
+        });
 
         // Set the tick going every 25 miliseconds.
         setInterval(() => this.tick(), 25);
     }
     
     private tick() {
-        // Filter out the columns that are still in the delay phase. The rest need to tick.
-        this.columns.filter(column => column.doTick === true).forEach((column: MatrixColumn) => {
-            // The MatrixColumn object does most of the work.
-            column.tick(this.tasks);
+        this.tasks.queueMicroTask(() => {
+            // Filter out the columns that are still in the delay phase. The rest need to tick.
+            this.columns.filter(column => column.doTick === true).forEach((column: MatrixColumn) => {
+                // The MatrixColumn object does most of the work.
+                column.tick(this.tasks);
 
-            // These columns have faded out, reset them for another run.
-            if (column.charactersToRemove > (column.charactersToDisplay + 10)) { this.resetColumn(column); }
-        });
+                // These columns have faded out, reset them for another run.
+                if (column.charactersToRemove > (column.charactersToDisplay + 10)) { this.resetColumn(column); }
+            });
+        });    
     }
 
     // Add a column to the container. Set default / static values, then reset it.
     private addColumn() {
-        this.tasks.queueMicroTask(() => {
-            let column: MatrixColumn = new MatrixColumn();
-            column.leftPosition = this.columns.length * this.characterWidth;
-            column.characterHeight = this.characterHeight;
-            this.resetColumn(column);
-            this.columns.push(column);
-        });
+        let column: MatrixColumn = new MatrixColumn();
+        column.leftPosition = this.columns.length * this.characterWidth;
+        column.characterHeight = this.characterHeight;
+        this.resetColumn(column);
+        this.columns.push(column);
     }
 
     // Get the column to reset itself, then set its text, speed, and delay phase duration.
     private resetColumn(column: MatrixColumn) {
-        column.reset(this.tasks);
-
         this.tasks.queueMicroTask(() => {
+            column.reset(this.tasks);
             column.setRowText(this.rowsOnScreen, this.minCharacters, this.characters);
             column.pixelsPerTick = App.getRandomNumberBetween(this.maxSpeed, this.minSpeed);
         });
@@ -102,15 +103,14 @@ export class App {
         return (Math.ceil(App.getNextRandomNumber() * (max - min)) + min);
     }
     
-    public static PopulateRandomNumbers(){
+    public static PopulateRandomNumbers() {
         for (let i: number = 0; i < 5000000; i++)
         {
             this.randomNumbers.push(Math.random());
         }
     }
 
-    public static getNextRandomNumber() : number
-    {
+    public static getNextRandomNumber() : number {
         if (App.nextRandomNumberIndex >= App.randomNumbers.length)
         {
             App.nextRandomNumberIndex++;
@@ -177,14 +177,11 @@ export class MatrixColumn {
     }
 
     public reset(tasks: TaskQueue){
-        tasks.queueMicroTask(() => {
-            this.doTick = false;
-            this.pseudoHeight = 0;
-            this.topPositioning = 0;
-            this.charactersToDisplay = 0;
-            this.charactersToRemove = 0;
-        });
-            
+        this.doTick = false;
+        this.pseudoHeight = 0;
+        this.topPositioning = 0;
+        this.charactersToDisplay = 0;
+        this.charactersToRemove = 0;    
     }
 
     public setRowText(rowsOnScreen: number, minCharacters: number, characters: string[]) {
@@ -199,21 +196,17 @@ export class MatrixColumn {
     public tick(tasks: TaskQueue){
         if (this.charactersToDisplay < this.columnCharacters.length)
         {
-            tasks.queueMicroTask(() => {
-                this.pseudoHeight += this.pixelsPerTick;
-                this.charactersToDisplay = Math.min(this.columnCharacters.length, Math.floor(this.pseudoHeight / this.characterHeight));
-            });
+            this.pseudoHeight += this.pixelsPerTick;
+            this.charactersToDisplay = Math.min(this.columnCharacters.length, Math.floor(this.pseudoHeight / this.characterHeight));
         }
             
         if (this.charactersToDisplay >= this.charactersBeforeFadeStarts)
         {
-            tasks.queueMicroTask(() => {
-                // This is essentially like having a box overlay the column, growing in height every tick and covering characters.
-                this.topPositioning += this.pixelsPerTick;
+            // This is essentially like having a box overlay the column, growing in height every tick and covering characters.
+            this.topPositioning += this.pixelsPerTick;
 
-                // The total number of characters that would at least partially covered by the pseudo overlay.
-                this.charactersToRemove = Math.ceil(this.topPositioning / this.characterHeight);
-            });
+            // The total number of characters that would at least partially covered by the pseudo overlay.
+            this.charactersToRemove = Math.ceil(this.topPositioning / this.characterHeight);
         }
     }
 
