@@ -149,7 +149,7 @@ export class MatrixColumn {
     public characterHeight: number;
     public leftPosition: number;
     public topPositioning: number = 0;
-
+    public columnHeight: number = 0;
     public pseudoHeight: number = 0;
     
     public charactersToDisplay: number = 0;
@@ -161,9 +161,9 @@ export class MatrixColumn {
 
     public doTick: boolean = false;
 
-    @computedFrom("leftPosition")
+    @computedFrom("columnHeight")
     get cssText(): string {
-        return `left: ${this.leftPosition}px;`;
+        return `left: ${this.leftPosition}px; height: ${this.columnHeight}px;`;
     }
     
     @computedFrom("topPositioning")
@@ -171,9 +171,11 @@ export class MatrixColumn {
         return `left: ${this.leftPosition}px; height: ${this.topPositioning}px;`;
     }
     
-    @computedFrom("charactersToDisplay")
+    public _columnText: string = "";
+
+    @computedFrom("_columnText")
     get columnText(): string {
-        return this.columnCharacters.filter((value, index) => (index < this.charactersToDisplay)).join('<br />');
+        return this._columnText;
     }
 
     public reset(tasks: TaskQueue){
@@ -181,7 +183,8 @@ export class MatrixColumn {
         this.pseudoHeight = 0;
         this.topPositioning = 0;
         this.charactersToDisplay = 0;
-        this.charactersToRemove = 0;    
+        this.charactersToRemove = 0;
+        this.columnHeight = 0;
     }
 
     public setRowText(rowsOnScreen: number, minCharacters: number, characters: string[]) {
@@ -191,6 +194,8 @@ export class MatrixColumn {
         for (let i: number = 0; i < rowsOnScreen; i++) {
             this.columnCharacters.push(characters[Math.floor(App.getNextRandomNumber() * (characters.length))]);
         }
+
+        this._columnText = this.columnCharacters.join('<br />');
     }
 
     public tick(tasks: TaskQueue){
@@ -198,6 +203,7 @@ export class MatrixColumn {
         {
             this.pseudoHeight += this.pixelsPerTick;
             this.charactersToDisplay = Math.min(this.columnCharacters.length, Math.floor(this.pseudoHeight / this.characterHeight));
+            this.columnHeight = this.charactersToDisplay * this.characterHeight;
         }
             
         if (this.charactersToDisplay >= this.charactersBeforeFadeStarts)
