@@ -39,6 +39,7 @@ export class App {
         column.leftPosition = this.columns.length * characterWidth;
         column.screenHeight = screenHeight;
         column.animationCompleteCallback = (mc: MatrixColumn) => { this.resetColumn(mc); };
+        column.rowsOnScreen = this.rowsOnScreen;
         this.resetColumn(column);
         this.columns.push(column);
     }
@@ -125,6 +126,7 @@ export class MatrixColumn {
     public transition: number = 0;
     public fadeTransition: number = 0;
     public screenHeight: number = 0;
+    public rowsOnScreen: number = 0;
 
     public _columnText: string = "";
 
@@ -132,7 +134,7 @@ export class MatrixColumn {
 
     @computedFrom("columnHeight")
     get cssText(): string {
-        return `left: ${this.leftPosition}px; height: ${this.columnHeight}px; transition: height ${this.transition}s;`;
+        return `left: ${this.leftPosition}px; height: ${this.columnHeight}px; transition: height ${this.transition}s steps(${this.rowsOnScreen}, start);`;
     }
     
     @computedFrom("topPositioning")
