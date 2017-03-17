@@ -19,10 +19,11 @@ $text-fade-colour: white;
     overflow: hidden;
 }
 
-#matrix .matrix-column {
+.matrix-column {
     position:absolute;
     top:0;
     left:0;
+    height: 0;
     background-image: linear-gradient(to bottom, $text-colour, $text-colour, $text-colour, $text-fade-colour);
     color: transparent;
     background-clip: text;
@@ -31,9 +32,10 @@ $text-fade-colour: white;
     transform: scale(-1, 1);
 }
 
-#matrix .fade-column {
+.matrix-fade-column {
     background-image: linear-gradient(to bottom, $screen-colour, $screen-colour, transparent);
     position: absolute;
     top: 0;
     width: 100%;
+    height: 0;
 }
